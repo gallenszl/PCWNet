@@ -8,7 +8,7 @@ Cost Volume for Stereo Matching, `ECCV 2022 oral`, Zhelun Shen, Yuchao Dai, Xibi
 
 [comment]: <> (Camera ready version and supplementary Materials can be found in [\[CVPR official website\]]&#40;https://openaccess.thecvf.com/content/CVPR2021/html/Shen_CFNet_Cascade_and_Fused_Cost_Volume_for_Robust_Stereo_Matching_CVPR_2021_paper.html&#41;)
 
-**Due to company policy, the code will be open sourced after approval is completed. **
+**Due to company policy, the code will be open sourced after approval is completed.**
 
 [comment]: <> (## Abstract)
 
