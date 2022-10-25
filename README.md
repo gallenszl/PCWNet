@@ -4,7 +4,7 @@ Cost Volume for Stereo Matching, `ECCV 2022 oral`, Zhelun Shen, Yuchao Dai, Xibi
 
 **Our method obtains the `1st` place on the stereo task of KITTI 2012 benchmark and `2nd` place on KITTI 2015 benchmark.**
 
-(Camera ready version and supplementary Materials can be found in [\[CVPR official website\]]https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136920280.pdf;)
+(Camera ready version and supplementary Materials can be found in [\[CVPR official website\]](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136920280.pdf)
 
 **Due to company policy, the code will be open sourced after approval is completed.**
 
