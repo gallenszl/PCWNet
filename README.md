@@ -1,11 +1,10 @@
 # PCWNet (ECCV 2022 oral)
 This is the implementation of the paper PCW-Net: Pyramid Combination and Warping
 Cost Volume for Stereo Matching, `ECCV 2022 oral`, Zhelun Shen, Yuchao Dai, Xibin Song, Zhibo Rao, Dingfu Zhou and Liangjun Zhang 
-<> ([\[Arxiv\]]&#40;https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136920280.pdf;.)
 
 **Our method obtains the `1st` place on the stereo task of KITTI 2012 benchmark and `2nd` place on KITTI 2015 benchmark.**
 
-[comment]: <> (Camera ready version and supplementary Materials can be found in [\[CVPR official website\]]&#40;https://openaccess.thecvf.com/content/CVPR2021/html/Shen_CFNet_Cascade_and_Fused_Cost_Volume_for_Robust_Stereo_Matching_CVPR_2021_paper.html&#41;)
+(Camera ready version and supplementary Materials can be found in [\[CVPR official website\]]&https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136920280.pdf;)
 
 **Due to company policy, the code will be open sourced after approval is completed.**
 
