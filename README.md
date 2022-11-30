@@ -1,130 +1,112 @@
 # PCWNet (ECCV 2022 oral)
-This is the implementation of the paper PCW-Net: Pyramid Combination and Warping
+This is the official pytorch implementation of the paper PCW-Net: Pyramid Combination and Warping
 Cost Volume for Stereo Matching, `ECCV 2022 oral`, Zhelun Shen, Yuchao Dai, Xibin Song, Zhibo Rao, Dingfu Zhou and Liangjun Zhang 
+
+[comment]: <> ([\[Arxiv\]]&#40;https://arxiv.org/abs/2104.04314&#41;.)
 
 **Our method obtains the `1st` place on the stereo task of KITTI 2012 benchmark and `2nd` place on KITTI 2015 benchmark.**
 
-(Camera ready version and supplementary Materials can be found in [\[ECCV official website\]](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136920280.pdf)
+**Note : see the paddle implementation and the awesome unified framework for stereo matching in [Paddledepth](https://github.com/PaddlePaddle/PaddleDepth)**
 
-**Due to company policy, the code will be open sourced after approval is completed.**
+[comment]: <> (Camera ready version and supplementary Materials can be found in [\[CVPR official website\]]&#40;https://openaccess.thecvf.com/content/CVPR2021/html/Shen_CFNet_Cascade_and_Fused_Cost_Volume_for_Robust_Stereo_Matching_CVPR_2021_paper.html&#41;)
 
-[comment]: <> (## Abstract)
+## Abstract
+Existing deep learning based stereo matching methods either focus on 
+achieving optimal performances on the target dataset while with poor generalization for other datasets 
+or focus on handling the cross-domain generalization 
+by suppressing the domain sensitive features which results in a significant sacrifice on the performance. 
+To tackle these problems, we propose PCW-Net, a Pyramid Combination and Warping cost volume-based network 
+to achieve good performance on both cross-domain generalization and stereo matching 
+accuracy on various benchmarks. 
+In particular, our PCW-Net is designed for two purposes. First, we construct combination volumes 
+on the upper levels of the pyramid and develop a cost volume fusion module to integrate them 
+for initial disparity estimation. Multi-scale receptive fields can be covered by 
+fusing multi-scale combination volumes, thus, domain-invariant features can be extracted. 
+Second, we construct the warping volume at the last level of the pyramid for disparity refinement. 
+The proposed warping volume can narrow down the 
+residue searching range from the initial disparity searching range to a fine-grained one, 
+which can dramatically alleviate the difficulty of the network to 
+find the correct residue in an unconstrained residue searching space. 
+When training on synthetic datasets and generalizing to unseen real datasets, 
+our method shows strong cross-domain generalization and outperforms 
+existing state-of-the-arts with a large margin. After fine-tuning on the real datasets, 
+our method ranks first on KITTI 2012, second on KITTI 2015, and first on the Argoverse among all published methods as of 7, March 2022.
 
-[comment]: <> (Recently, the ever-increasing capacity of large-scale annotated datasets has led to profound progress in stereo matching. However, most of these successes are limited to a specific dataset and cannot generalize well to other datasets. The main difficulties lie in the large domain differences and unbalanced disparity distribution across a variety of datasets, which greatly limit the real-world applicability of current deep stereo matching models. In this paper, we propose CFNet, a Cascade and Fused cost volume based network to improve the robustness of the stereo matching network. First, we propose a fused cost volume representation to deal with the large domain difference. By fusing multiple low-resolution dense cost volumes to enlarge the receptive field, we can extract robust structural representations for initial disparity estimation. Second, we propose a cascade cost volume representation to alleviate the unbalanced disparity distribution. Specifically, we employ a variance-based uncertainty estimation to adaptively adjust the next stage disparity search space, in this way driving the network progressively prune out the space of unlikely correspondences. By iteratively narrowing down the disparity search space and improving the cost volume resolution, the disparity estimation is gradually refined in a coarse-tofine manner. When trained on the same training images and evaluated on KITTI, ETH3D, and Middlebury datasets with the fixed model parameters and hyperparameters, our proposed method achieves the state-of-the-art overall performance and obtains the 1st place on the stereo task of Robust Vision Challenge 2020.)
+# How to use
+## Environment
+* python 3.74
+* Pytorch == 1.1.0
+* Numpy == 1.15
+## Data Preparation
+Download [Scene Flow Datasets](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html), [KITTI 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo), [KITTI 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo), [ETH3D](https://www.eth3d.net/), [Middlebury](https://vision.middlebury.edu/stereo/)
 
-[comment]: <> (# How to use)
+**KITTI2015/2012 SceneFlow**
 
-[comment]: <> (## Environment)
+please place the dataset as described in `"./filenames"`, i.e., `"./filenames/sceneflow_train.txt"`, `"./filenames/sceneflow_test.txt"`, `"./filenames/kitticombine.txt"`
 
-[comment]: <> (* python 3.74)
+**Middlebury/ETH3D**
 
-[comment]: <> (* Pytorch == 1.1.0)
+Our folder structure is as follows:
+```
+dataset
+├── KITTI2015
+├── KITTI2012
+├── Middlebury
+    │ ├── Adirondack
+    │   ├── im0.png
+    │   ├── im1.png
+    │   └── disp0GT.pfm
+├── ETH3D
+    │ ├── delivery_area_1l
+    │   ├── im0.png
+    │   ├── im1.png
+    │   └── disp0GT.pfm
+```
+Note that we use the half-resolution dataset of Middlebury for testing. 
+## Training
+**Scene Flow Datasets Pretraining**
 
-[comment]: <> (* Numpy == 1.15)
+run the script `./scripts/sceneflow.sh` to pre-train on Scene Flow datsets. Please update `DATAPATH` in the bash file as your training data path.
+To repeat our pretraining details. You may need to replace the Mish activation function to Relu.  Samples are shown in `./models/relu/`.
 
-[comment]: <> (## Data Preparation)
+**Finetuning**
 
-[comment]: <> (Download [Scene Flow Datasets]&#40;https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html&#41;, [KITTI 2012]&#40;http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo&#41;, [KITTI 2015]&#40;http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo&#41;, [ETH3D]&#40;https://www.eth3d.net/&#41;, [Middlebury]&#40;https://vision.middlebury.edu/stereo/&#41;)
+run the script `./scripts/kitti15.sh` and `./scripts/kitti12.sh` to finetune our pretraining model on the KITTI dataset. Please update `DATAPATH` and `--loadckpt` as your training data path and pretrained SceneFlow checkpoint file.
+## Evaluation
+**Corss-domain Generalization**
 
+run the script `./scripts/generalization_test.sh"` to test the cross-domain generalizaiton of the model (Table.2 of the main paper). Please update `--loadckpt` as pretrained SceneFlow checkpoint file.
 
-[comment]: <> (**KITTI2015/2012 SceneFlow**)
+**Finetuning Performance**
 
-[comment]: <> (please place the dataset as described in `"./filenames"`, i.e., `"./filenames/sceneflow_train.txt"`, `"./filenames/sceneflow_test.txt"`, `"./filenames/kitticombine.txt"`)
+run the script `./scripts/kitti15_save.sh"` and `./scripts/kitti12_save.sh"` to generate the corresponding test images of KITTI 2015&2012
 
-[comment]: <> (**Middlebury/ETH3D**)
+## Pretrained Models
 
-[comment]: <> (Our folder structure is as follows:)
+[Sceneflow Pretraining Model](https://drive.google.com/file/d/18HglItUO7trfi-klXzqLq7KIDwPSVdAM/view?usp=sharing)
 
-[comment]: <> (```)
+You can use this checkpoint to reproduce the result we reported in Table.2 of the main paper
 
-[comment]: <> (dataset)
+[KITTI 2012 Finetuneing Moel](https://drive.google.com/file/d/14MANgQJ15Qzukv9SoL9MYobg5xUjE-u0/view?usp=sharing)
 
-[comment]: <> (├── KITTI2015)
+You can use this checkpoint to reproduce the result we submitted on KITTI 2012 benchmark.
 
-[comment]: <> (├── KITTI2012)
+## Citation
 
-[comment]: <> (├── Middlebury)
+If you find this code useful in your research, please cite:
 
-[comment]: <> (    │ ├── Adirondack)
+```
+@inproceedings{shen2022pcw,
+  title={PCW-Net: Pyramid Combination and Warping Cost Volume for Stereo Matching},
+  author={Shen, Zhelun and Dai, Yuchao and Song, Xibin and Rao, Zhibo and Zhou, Dingfu and Zhang, Liangjun},
+  booktitle={European Conference on Computer Vision},
+  pages={280--297},
+  year={2022},
+  organization={Springer}
+}
 
-[comment]: <> (    │   ├── im0.png)
+```
 
-[comment]: <> (    │   ├── im1.png)
+# Acknowledgements
 
-[comment]: <> (    │   └── disp0GT.pfm)
-
-[comment]: <> (├── ETH3D)
-
-[comment]: <> (    │ ├── delivery_area_1l)
-
-[comment]: <> (    │   ├── im0.png)
-
-[comment]: <> (    │   ├── im1.png)
-
-[comment]: <> (    │   └── disp0GT.pfm)
-
-[comment]: <> (```)
-
-[comment]: <> (Note that we use the full-resolution image of Middlebury for training as the additional training images don't have half-resolution version. We will down-sample the input image to half-resolution in the data argumentation. In contrast,  we use the half-resolution image and full-resolution disparity of Middlebury for testing. )
-
-[comment]: <> (## Training)
-
-[comment]: <> (**Scene Flow Datasets Pretraining**)
-
-[comment]: <> (run the script `./scripts/sceneflow.sh` to pre-train on Scene Flow datsets. Please update `DATAPATH` in the bash file as your training data path.)
-
-[comment]: <> (To repeat our pretraining details. You may need to replace the Mish activation function to Relu. Samples is shown in `./models/relu/`.)
-
-[comment]: <> (**Finetuning**)
-
-[comment]: <> (run the script `./scripts/robust.sh` to jointly finetune the pre-train model on four datasets,)
-
-[comment]: <> (i.e., KITTI 2015, KITTI2012, ETH3D, and Middlebury. Please update `DATAPATH` and `--loadckpt` as your training data path and pretrained SceneFlow checkpoint file.)
-
-[comment]: <> (## Evaluation)
-
-[comment]: <> (**Joint Generalization**)
-
-[comment]: <> (run the script `./scripts/eth3d_save.sh"`, `./scripts/mid_save.sh"` and `./scripts/kitti15_save.sh` to save png predictions on the test set of the ETH3D, Middlebury, and KITTI2015 datasets. Note that you may need to update the storage path of save_disp.py, i.e., `fn = os.path.join&#40;"/home3/raozhibo/jack/shenzhelun/cfnet/pre_picture/"`, fn.split&#40;'/'&#41;[-2]&#41;.)
-
-[comment]: <> (**Corss-domain Generalization**)
-
-[comment]: <> (run the script `./scripts/robust_test.sh"` to test the cross-domain generalizaiton of the model &#40;Table.3 of the main paper&#41;. Please update `--loadckpt` as pretrained SceneFlow checkpoint file.)
-
-[comment]: <> (## Pretrained Models)
-
-[comment]: <> ([Pretraining Model]&#40;https://drive.google.com/file/d/1gFNUc4cOCFXbGv6kkjjcPw2cJWmodypv/view?usp=sharing&#41;)
-
-[comment]: <> (You can use this checkpoint to reproduce the result we reported in Table.3 of the main paper)
-
-[comment]: <> ([Finetuneing Moel]&#40;https://drive.google.com/file/d/1H6L-lQjF4yOxq23wxs3HW40B-0mLxUiI/view?usp=sharing&#41;)
-
-[comment]: <> (You can use this checkpoint to reproduce the result we reported in the stereo task of Robust Vision Challenge 2020)
-
-[comment]: <> (## Citation)
-
-[comment]: <> (If you find this code useful in your research, please cite:)
-
-[comment]: <> (```)
-
-[comment]: <> (@InProceedings{Shen_2021_CVPR,)
-
-[comment]: <> (    author    = {Shen, Zhelun and Dai, Yuchao and Rao, Zhibo},)
-
-[comment]: <> (    title     = {CFNet: Cascade and Fused Cost Volume for Robust Stereo Matching},)
-
-[comment]: <> (    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition &#40;CVPR&#41;},)
-
-[comment]: <> (    month     = {June},)
-
-[comment]: <> (    year      = {2021},)
-
-[comment]: <> (    pages     = {13906-13915})
-
-[comment]: <> (})
-
-[comment]: <> (```)
-
-[comment]: <> (# Acknowledgements)
-
-[comment]: <> (Thanks to the excellent work GWCNet, Deeppruner, and HSMNet. Our work is inspired by these work and part of codes are migrated from [GWCNet]&#40;https://github.com/xy-guo/GwcNet&#41;, [DeepPruner]&#40;https://github.com/uber-research/DeepPruner/&#41; and [HSMNet]&#40;https://github.com/gengshan-y/high-res-stereo&#41;.)
+Thanks to the excellent work GWCNet and HSMNet. Our work is inspired by these work and part of codes are migrated from [GWCNet](https://github.com/xy-guo/GwcNet) and [HSMNet](https://github.com/gengshan-y/high-res-stereo).
